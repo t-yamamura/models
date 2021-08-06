@@ -24,6 +24,8 @@ from absl import flags
 from absl import logging
 import tensorflow as tf
 
+from sudachitra import BertSudachipyTokenizer
+
 from official.nlp.bert import tokenization
 
 FLAGS = flags.FLAGS
@@ -42,6 +44,18 @@ flags.DEFINE_bool(
     "do_lower_case", True,
     "Whether to lower case the input text. Should be True for uncased "
     "models and False for cased models.")
+
+flags.DEFINE_string("tokenizer_type", None,
+                    "Tokenizer type (character, wordpiece).")
+
+flags.DEFINE_string("word_form_type", None,
+                    "Word form type (surface, dictionary, normalized, dictionary_and_surface, normalized_and_surface).")
+
+flags.DEFINE_string("split_mode", None,
+                    "The mode of splitting (A, B, C).")
+
+flags.DEFINE_string("sudachi_dic_type", None,
+                    "Sudachi dictionary type (small, core, full)")
 
 flags.DEFINE_bool(
     "do_whole_word_mask", False,
@@ -634,8 +648,16 @@ def truncate_seq_pair(tokens_a, tokens_b, max_num_tokens, rng):
 
 
 def main(_):
-  tokenizer = tokenization.FullTokenizer(
-      vocab_file=FLAGS.vocab_file, do_lower_case=FLAGS.do_lower_case)
+  tokenizer = BertSudachipyTokenizer(
+    FLAGS.vocab_file,
+    do_lower_case=False,
+    do_word_tokenize=True,
+    do_subword_tokenize=True,
+    word_tokenizer_type="sudachipy",
+    subword_tokenizer_type=FLAGS.tokenizer_type,
+    word_form_type=FLAGS.word_form_type,
+    sudachipy_kwargs=dict(split_mode=FLAGS.split_mode, dict_type=FLAGS.sudachi_dic_type),
+  )
 
   input_files = []
   for input_pattern in FLAGS.input_file.split(","):
