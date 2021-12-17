@@ -45,6 +45,11 @@ flags.DEFINE_bool(
     "Whether to lower case the input text. Should be True for uncased "
     "models and False for cased models.")
 
+flags.DEFINE_bool(
+    "do_nfkc", True,
+    "Whether to use unicode normalization (NFKC)."
+)
+
 flags.DEFINE_string("tokenizer_type", None,
                     "Tokenizer type (character, wordpiece).")
 
@@ -650,7 +655,8 @@ def truncate_seq_pair(tokens_a, tokens_b, max_num_tokens, rng):
 def main(_):
   tokenizer = BertSudachipyTokenizer(
     FLAGS.vocab_file,
-    do_lower_case=False,
+    do_lower_case=FLAGS.do_lower_case,
+    do_nfkc=FLAGS.do_nfkc,
     do_word_tokenize=True,
     do_subword_tokenize=True,
     word_tokenizer_type="sudachipy",
