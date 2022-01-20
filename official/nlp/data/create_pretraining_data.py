@@ -41,6 +41,11 @@ flags.DEFINE_string("vocab_file", None,
                     "The vocabulary file that the BERT model was trained on.")
 
 flags.DEFINE_bool(
+    "do_strip", True,
+    "Removes all whitespace characters on both sides of the input."
+)
+
+flags.DEFINE_bool(
     "do_lower_case", True,
     "Whether to lower case the input text. Should be True for uncased "
     "models and False for cased models.")
@@ -655,6 +660,7 @@ def truncate_seq_pair(tokens_a, tokens_b, max_num_tokens, rng):
 def main(_):
   tokenizer = BertSudachipyTokenizer(
     FLAGS.vocab_file,
+    do_strip=FLAGS.do_strip,
     do_lower_case=FLAGS.do_lower_case,
     do_nfkc=FLAGS.do_nfkc,
     do_word_tokenize=True,
